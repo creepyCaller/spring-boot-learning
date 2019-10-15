@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>管理</title>
+    <link rel="icon" th:href="@{/res/png/lg.png}" sizes="32x32"/>
+    <link rel="stylesheet" th:href="@{/res/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/res/css/dashboard.css}"/>
+    <link rel="stylesheet" th:href="@{/res/css/topnavbar.css}"/>
+</head>
+
+<body>
+
+<div th:replace="common/navbar::navbarbg"></div>
+
+<div id="app" class="container-fluid">
+    <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span data-feather="home"></span>
+                            管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <span data-feather="file"></span>
+                            订单 <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span data-feather="shopping-cart"></span>
+                            产品
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span data-feather="users"></span>
+                            顾客
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span data-feather="bar-chart-2"></span>
+                            报告
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span data-feather="layers"></span>
+                            集成
+                        </a>
+                    </li>
+                </ul>
+
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span>已保存的报告</span>
+                    <a class="d-flex align-items-center text-muted" href="#">
+                        <span data-feather="plus-circle"></span>
+                    </a>
+                </h6>
+                <ul class="nav flex-column mb-2">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span data-feather="file-text"></span>
+                            当前月
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span data-feather="file-text"></span>
+                            上个季度
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span data-feather="file-text"></span>
+                            社会订单
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span data-feather="file-text"></span>
+                            年终促销
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <span>
+                    <h1>订单</h1>
+                    <a class="btn btn-outline-primary" th:href="@{/dashboard/want/post}">增加·POST</a>
+                    <a class="btn btn-outline-danger" th:href="@{/dashboard/want/delete}">删除·DELETE</a>
+                    <a class="btn btn-outline-warning" th:href="@{/dashboard/want/put}">修改·PUT</a>
+                    <a class="btn btn-outline-info" th:href="@{/dashboard/want/get}">查询·GET</a>
+                </span>
+            </div>
+
+            <!--把这里改成用Vue + Ajax传来的JSON填数据-->
+            <!--把每个表格改成可点击的，点击以后进入一个页面，可供对选定元素进行删改-->
+            <div class="table-responsive" id="tb">
+                <table class="table table-striped table-sm">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>商品名</th>
+                        <th>单价（￥）</th>
+                        <th>数量</th>
+                        <th>总价（￥）</th>
+                        <th>下单日期</th>
+                        <th>备注</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="iter in content">
+                        <td>{{ iter.id }}</td>
+                        <td>{{ iter.name }}</td>
+                        <td>{{ iter.price }}</td>
+                        <td>{{ iter.amount }}</td>
+                        <td>{{ iter.amount * iter.price }}</td>
+                        <td>{{ iter.date }}</td>
+                        <td>{{ iter.remark }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="pagination"></div>
+
+        </main>
+    </div>
+</div>
+<script th:src="@{/res/js/vue.min.js}"></script>
+<script th:src="@{/res/js/vue-resource.min.js}"></script>
+<script th:src="@{/res/js/jquery-3.4.1.min.js}"></script>
+<script th:src="@{/res/js/feather.min.js}"></script>
+<script th:src="@{/res/js/popper.min.js}"></script>
+<script th:src="@{/res/js/bootstrap.min.js}"></script>
+<script th:src="@{/res/js/dashboard.js}"></script>
+<script th:src="@{/res/js/pagination.js}"></script>
+<script>
+    var page = [[${page}]]; // 当前页，从model传过来的，从{ServiceRoot}/dashboard/want/{page}传过来
+    var url = '/wants/page/'; // Ajax请求的资源地址，返回的信息参考manage.html里边那条
+    var tb = new Vue({
+        el: '#tb',
+        data: {
+            pageSize: null,
+            page: null,
+            totalRows: null,
+            content: null
+        },
+        created: function () {
+            // 在d当前Vue实例创建时从url获取响应报文体赋值到data
+            this.$http.get(url + page).then((response) => this.responseHandle(response));
+        },
+        methods: {
+            responseHandle: function (response) {
+                this.pageSize = response.body.content.pageable.pageSize;
+                this.page = response.body.content.pageable.pageNumber+1;
+                this.totalRows = response.body.content.totalElements;
+                this.content = response.body.content.content;
+            }
+        }
+    });
+    $(function () {
+        $('#pagination').pagination({
+            pageSize: 10,
+            page: 1,
+            totalRows: 10,
+            onClickPage: function (event, page) {
+                // 收到点击事件之后调用tb的onChangePage(page)方法，其中参数page是页号
+                // 怎么把这个pagination的属性也实现双向绑定
+                // tb.onChangePage(page); // 这样的话pagination并不会一起更新，要么pagination也是用Vue实现的，要么就跳转
+                // 或者用别人做好的分页控件，在点击对应的页之后分页控件自己就会刷新，与此同时回调函数也会调用tb的
+            }
+        });
+    });
+</script>
+</body>
+</html>

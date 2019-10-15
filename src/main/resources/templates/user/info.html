@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>用户信息</title>
+    <link rel="icon" th:href="@{/res/png/lg.png}" sizes="32x32"/>
+    <link rel="stylesheet" th:href="@{/res/css/bootstrap.min.css}"/>
+</head>
+<body class="text-center">
+    <div id="app">
+        <p class="display-1">{{ user.username }}</p>
+        <p>唯一标识符：{{ user.id }}</p>
+        <p>电子邮箱：{{ user.email }}</p>
+        <p>状态：{{ user.status | userStatus(user.status) }}</p>
+    </div>
+    <script th:src="@{/res/js/vue.min.js}"></script>
+    <script th:src="@{/res/js/vue-resource.min.js}"></script>
+    <script th:src="@{/res/js/jquery-3.4.1.min.js}"></script>
+    <script th:src="@{/res/js/popper.min.js}"></script>
+    <script th:src="@{/res/js/bootstrap.min.js}"></script>
+    <script>
+        // 从model中获取在{ServiceRoot}/user/{username}这个URL中的username
+        var username = '[[${username}]]';
+        // 创建一个Vue的实例化对象，并且挂载至app
+        var app = new Vue({
+            el: '#app',
+            data: {
+                user: null // 创建一个空属性，等待传入引用
+            },
+            computed: {
+                // 计算对象
+            },
+            filters: {
+                // 过滤器
+                userStatus: function (status) {
+                    return status === 0 ? '正常' : '异常';
+                }
+            },
+            created: function () {
+                // 生命周期钩子：在创建时调用
+                var url = '/users/' + username;
+                // {Vue实例}.$http.get(url, [options]).then(successCallback, errorCallback);
+                /**
+                 * 基于RESTful请求设计的几种方法
+                 * get(url, [options])
+                 * head(url, [options])
+                 * delete(url, [options])
+                 * jsonp(url, [options])
+                 * post(url, [body], [options])
+                 * put(url, [body], [options])
+                 * patch(url, [body], [options])
+                 */
+                // ES-6的lambda表达式(response) => {...}，等同于function(response) {...}
+                this.$http.get(url).then((response) => {
+                    this.user = response.body.content
+                }, (response) => {
+                    alert(response.statusText);
+                });
+            },
+            mounted: function() {
+                // 生命周期钩子：在el挂载到实例后调用
+            },
+            beforeDestroy: function() {
+                // 生命周期钩子：在这个Vue实例销毁前调用
+            },
+            methods: {
+                // 方法
+            }
+        });
+    </script>
+</body>
+</html>

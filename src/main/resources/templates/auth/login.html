@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="icon" th:href="@{/res/png/lg.png}" sizes="32x32"/>
+    <link rel="stylesheet" th:href="@{/res/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/res/css/signin.css}"/>
+    <link rel="stylesheet" th:href="@{/res/css/topnavbar.css}"/>
+    <link rel="stylesheet" th:href="@{/res/css/toastr.min.css}"/>
+</head>
+
+<body class="text-center">
+<form id="loginForm" class="form-signin">
+    <img class="mb-4" th:src="@{/res/svg/ddr.svg}" alt="" width="72" height="72">
+    <h1 class="h3 mb-3 font-weight-normal">登录</h1>
+    <label for="inputUsername" class="sr-only">用户名</label>
+    <input type="text" id="inputUsername" class="form-control" placeholder="用户名" required autofocus name="username">
+    <label for="inputPassword" class="sr-only">密码</label>
+    <input type="password" id="inputPassword" class="form-control" placeholder="密码" required name="password">
+    <div class="checkbox mb-3">
+        <label>
+            <input type="checkbox" name="remember"> 记住我
+        </label>
+    </div>
+    <button id="loginBtn" class="btn btn-lg btn-primary btn-block" type="button">登入</button>
+    <p class="mt-5 mb-3 text-muted">&copy; 2019</p>
+</form>
+<script th:src="@{/res/js/vue.min.js}"></script>
+<script th:src="@{/res/js/jquery-3.4.1.min.js}"></script>
+<script th:src="@{/res/js/jquery.serializejson.js}"></script>
+<script th:src="@{/res/js/popper.min.js}"></script>
+<script th:src="@{/res/js/bootstrap.min.js}"></script>
+<script th:src="@{/res/js/toastr.min.js}"></script>
+<script>
+    $(function () {
+        $('#loginBtn').click(function () {
+            var username = $('#inputUsername').val();
+            var password = $('#inputPassword').val();
+            // 表单验证最好封装起来，或者用自带的，反正不是自己写的最好
+            if (username.length < 4 || username.length > 12) {
+                toastr.warning('输入用户名不合规范！', '登录失败！');
+            } else if (password.length < 6 || password.length > 16) {
+                toastr.warning('输入密码不合规范！', '登录失败！');
+            } else {
+                var url = '/auth/login';
+                var successUrl = '/';
+                var param = $('#loginForm').serializeJSON(); //返回一个JSON对象，需要使用JSON.stringify(JSON Object)转为字符串
+                $.ajax({
+                    type: 'post',
+                    url: url,
+                    data: {param: JSON.stringify(param)},
+                    dataType: 'json',
+                    success: function (resp) {
+                        if (1 === resp.status) {
+                            toastr.success(resp.message, '登录成功！');
+                            window.location.href = successUrl;
+                        } else {
+                            toastr.info('错误信息：' + JSON.stringify(resp), '登录失败！');
+                        }
+                    },
+                    error: function () {
+                        toastr.warning("ERROR!");
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

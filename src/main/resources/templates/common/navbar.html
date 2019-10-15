@@ -1,0 +1,24 @@
+<nav th:fragment="navbarbg" class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" th:href="@{/}">СУИТ</a>
+    <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+            <a th:if="${session.user}!=null" class="nav-link" th:href="@{/}" th:text="${session.user.username}"></a>
+        </li>
+    </ul>
+</nav>
+
+<div th:fragment="navbarfr" class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <h5 class="my-0 mr-md-auto font-weight-normal">СУИТ</h5>
+    <nav th:if="${session.user}!=null" class="my-2 my-md-0 mr-md-3">
+        <a class="p-2 text-dark" th:href="@{/dashboard/manager}">管理</a>
+        <a class="p-2 text-dark" th:href="@{/dashboard/want}">订单</a>
+    </nav>
+    <span th:if="${session.user}==null">
+        <a class="btn btn-link" th:href="@{/auth/login}">登录</a>
+        <a class="btn btn-outline-primary" th:href="@{/auth/register}">注册</a>
+    </span>
+    <span th:if="${session.user}!=null">
+        <a class="btn btn-link" th:href="@{/}" th:text="${session.user.username}"></a>
+        <a class="btn btn-outline-primary" th:href="@{/auth/logout}">注销</a>
+    </span>
+</div>

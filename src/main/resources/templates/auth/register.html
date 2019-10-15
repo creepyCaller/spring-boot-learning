@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <link rel="icon" th:href="@{/res/png/lg.png}" sizes="32x32"/>
+    <link rel="stylesheet" th:href="@{/res/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/res/css/register.css}"/>
+    <link rel="stylesheet" th:href="@{/res/css/topnavbar.css}"/>
+    <link rel="stylesheet" th:href="@{/res/css/toastr.min.css}"/>
+</head>
+
+<body class="text-center">
+
+<form id="registerForm" class="form-register">
+    <img class="mb-4" th:src="@{/res/svg/ddr.svg}" alt="" width="72" height="72">
+    <h1 class="h3 mb-3 font-weight-normal">注册</h1>
+    <label for="inputUsername" class="sr-only">用户名</label>
+    <input type="text" id="inputUsername" class="form-control" placeholder="用户名" required autofocus name="username">
+    <label for="inputEmail" class="sr-only">电子邮箱</label>
+    <input type="email" id="inputEmail" class="form-control" placeholder="电子邮箱" required name="email">
+    <label for="inputPassword" class="sr-only">密码</label>
+    <input type="password" id="inputPassword" class="form-control" placeholder="密码" required name="password">
+    <label for="confirmPassword" class="sr-only">确认密码</label>
+    <input type="password" id="confirmPassword" class="form-control" placeholder="确认密码" required>
+    <button id="registerBtn" class="btn btn-lg btn-primary btn-block" type="button">注册</button>
+    <p class="mt-5 mb-3 text-muted">&copy; 2019</p>
+</form>
+
+<script th:src="@{/res/js/vue.min.js}"></script>
+<script th:src="@{/res/js/jquery-3.4.1.min.js}"></script>
+<script th:src="@{/res/js/jquery.serializejson.js}"></script>
+<script th:src="@{/res/js/popper.min.js}"></script>
+<script th:src="@{/res/js/bootstrap.min.js}"></script>
+<script th:src="@{/res/js/toastr.min.js}"></script>
+<script>
+    $(function () {
+        $('#registerBtn').click(function () {
+            var reg =  /^\w+@\w+(\.[a-zA-Z]{2,3}){1,2}$/;
+            var username = $('#inputUsername').val();
+            var email = $('#inputEmail').val();
+            var password = $('#inputPassword').val();
+            var repassword = $('#confirmPassword').val();
+            // 表单验证最好封装起来，或者用自带的，反正不是自己写的最好
+            if (username.length < 4 || username.length > 12) {
+                toastr.warning('用户名长度必须为4-12！', '注册失败！');
+            } else if (!(password === repassword)) {
+                toastr.warning('两次输入密码不一致！', '注册失败！');
+            } else if ((password.length < 6 || password.length > 16) || (repassword.length < 6 || repassword.length > 16) ) {
+                toastr.warning('密码长度必须为6-16！', '注册失败！');
+            } else if (!(reg.test(email))) {
+                toastr.warning('邮箱格式不正确！', '注册失败！');
+            } else {
+                var url = '/auth/register';
+                var checkUrl = '/users/'+ username;
+                var successUrl = '/';
+                $.ajax({
+                    url: checkUrl,
+                    dataType: 'json',
+                    success: function (resp) {
+                        if (resp.status === 0) {
+                            var param = JSON.stringify($('#registerForm').serializeJSON()); //返回一个JSON对象，需要使用JSON.stringify(JSON Object)转为字符串
+                            $.ajax({
+                                type: 'post',
+                                url: url,
+                                data: {param: param},
+                                dataType: 'json',
+                                success: function (resp) {
+                                    if (resp.status === 1) {
+                                        toastr.success('注册成功！');
+                                        window.location.href = successUrl;
+                                    } else {
+                                        toastr.info('错误信息：' + JSON.stringify(resp), '注册失败！');
+                                    }
+                                },
+                                error: function () {
+                                    toastr.warning("ERROR!");
+                                }
+                            });
+                        } else if (resp.status === 1) {
+                            toastr.warning('用户名已被注册.', '注册失败！');
+                        }
+                    },
+                    error: function () {
+                        toastr.warning("ERROR!");
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>错误</title>
+    <link rel="icon" th:href="@{/res/png/lg.png}" sizes="32x32"/>
+    <link rel="stylesheet" th:href="@{/res/css/bootstrap.min.css}"/>
+</head>
+<body class="text-center">
+    <span class="display-1" th:text="${status}"></span>
+    <script th:src="@{/res/js/vue.min.js}"></script>
+    <script th:src="@{/res/js/jquery-3.4.1.min.js}"></script>
+    <script th:src="@{/res/js/popper.min.js}"></script>
+    <script th:src="@{/res/js/bootstrap.min.js}"></script>
+</body>
+</html>

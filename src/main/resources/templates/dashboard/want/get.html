@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>查询</title>
+    <link rel="icon" th:href="@{/res/png/lg.png}" sizes="32x32"/>
+    <link rel="stylesheet" th:href="@{/res/css/bootstrap.min.css}"/>
+</head>
+<body>
+    <div>
+        <label for="inputId">请输入编号:</label>
+        <input type="text" class="form-control" id="inputId">
+        <button type="button" class="btn btn-primary" id="postBtn">查询</button>
+    </div>
+    <div id="app">
+        <p>{{ data }}</p>
+        <p>{{ url }}</p>
+    </div>
+<script th:src="@{/res/js/vue.min.js}"></script>
+<script th:src="@{/res/js/vue-resource.min.js}"></script>
+<script th:src="@{/res/js/jquery-3.4.1.min.js}"></script>
+<script th:src="@{/res/js/popper.min.js}"></script>
+<script th:src="@{/res/js/bootstrap.min.js}"></script>
+<script>
+    var url = '/wants/';
+    var app = new Vue({
+        el: '#app',
+        data: {
+            data: '请输入编号后点击提交按钮.',
+            url: ''
+        },
+        methods: {
+            getWantInfo: function (id) {
+                this.url = url + id;
+                this.$http.get(this.url).then((response) => this.data = 'GET请求返回的响应报文：' + JSON.stringify(response));
+                this.url = '请求的地址：' + this.url;
+            }
+        }
+    });
+    $(function () {
+        $('#postBtn').click(function () {
+            var id = $('#inputId').val();
+            app.getWantInfo(id);
+        });
+    });
+</script>
+</body>
+</html>
