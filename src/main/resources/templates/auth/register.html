@@ -51,38 +51,26 @@
             } else if (!(reg.test(email))) {
                 toastr.warning('邮箱格式不正确！', '注册失败！');
             } else {
+                var param = JSON.stringify($('#registerForm').serializeJSON()); //返回一个JSON对象，需要使用JSON.stringify(JSON Object)转为字符串
                 var url = '/auth/register';
-                var checkUrl = '/users/'+ username;
                 var successUrl = '/';
                 $.ajax({
-                    url: checkUrl,
+                    type: 'post',
+                    url: url,
+                    data: {param: param},
                     dataType: 'json',
                     success: function (resp) {
-                        if (resp.status === 0) {
-                            var param = JSON.stringify($('#registerForm').serializeJSON()); //返回一个JSON对象，需要使用JSON.stringify(JSON Object)转为字符串
-                            $.ajax({
-                                type: 'post',
-                                url: url,
-                                data: {param: param},
-                                dataType: 'json',
-                                success: function (resp) {
-                                    if (resp.status === 1) {
-                                        toastr.success('注册成功！');
-                                        window.location.href = successUrl;
-                                    } else {
-                                        toastr.info('错误信息：' + JSON.stringify(resp), '注册失败！');
-                                    }
-                                },
-                                error: function () {
-                                    toastr.warning("ERROR!");
-                                }
-                            });
-                        } else if (resp.status === 1) {
+                        if (resp.status === 1) {
+                            toastr.success('注册成功！');
+                            window.location.href = successUrl;
+                        } else if (resp.status === 2) {
                             toastr.warning('用户名已被注册.', '注册失败！');
+                        } else {
+                            toastr.info('错误信息：' + JSON.stringify(resp), '注册失败！');
                         }
                     },
-                    error: function () {
-                        toastr.warning("ERROR!");
+                    error: function (resp) {
+                        toastr.info('错误信息：' + JSON.stringify(resp), '注册失败！');
                     }
                 });
             }

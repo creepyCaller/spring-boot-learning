@@ -16,13 +16,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class Want implements Serializable {
 
-    public Want(String name, int amount, double price, String remark, Date date, int status) {
-        this.name = name;
-        this.amount = amount;
-        this.price = price;
-        this.remark = remark;
-        this.date = date;
-        this.status = status;
+    public Want(int id) {
+        this.id = id;
     }
 
     @Id
@@ -31,14 +26,14 @@ public class Want implements Serializable {
 
     private String name;
 
-    private int amount;
+    private Integer amount;
 
-    private double price;
+    private Double price;
 
     private String remark;
 
     private Date date;
 
-    private int status;
+    private Integer status;
 
 }

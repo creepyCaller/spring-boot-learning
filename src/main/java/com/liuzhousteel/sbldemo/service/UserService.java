@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpSession;
 
-public interface UserService {
+public interface UserService extends BaseService {
 
     ResponseEntity<ResultModel> login(LoginModel loginModel, HttpSession session);
 

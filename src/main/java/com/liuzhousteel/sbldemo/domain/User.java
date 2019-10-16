@@ -28,6 +28,6 @@ public class User implements Serializable {
 
     private String email;
 
-    private int status;
+    private Integer status;
 
 }

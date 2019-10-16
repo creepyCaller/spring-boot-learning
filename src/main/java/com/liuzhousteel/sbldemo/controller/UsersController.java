@@ -3,7 +3,9 @@ package com.liuzhousteel.sbldemo.controller;
 import com.liuzhousteel.sbldemo.model.ResultModel;
 import com.liuzhousteel.sbldemo.model.UserModel;
 import com.liuzhousteel.sbldemo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/users")
+@Api("用户控制器，用于对用户资源的GET、POST、PUT、DELETE操作")
 public class UsersController {
 
     private final UserService userService;
@@ -22,6 +25,8 @@ public class UsersController {
     }
 
     @GetMapping(value = "/{username}")
+    @ApiOperation(value = "获取用户名为{username}的用户信息")
+    @ApiImplicitParam(name = "username", dataType = "String", paramType = "path")
     public ResponseEntity<ResultModel> getUserInfo(@PathVariable(value = "username") String username) {
         UserModel userModel = userService.getUserModel(username);
         if (userModel == null) {

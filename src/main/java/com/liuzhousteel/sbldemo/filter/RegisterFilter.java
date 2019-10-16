@@ -8,7 +8,10 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-@WebFilter(urlPatterns = "/user/register", filterName = "registerFilter")
+/**
+ * 用户过滤器，用于过滤绕过前端验证机制提交到后端的注册数据的格式
+ */
+@WebFilter(urlPatterns = "/auth/register", filterName = "registerFilter")
 public class RegisterFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) {
