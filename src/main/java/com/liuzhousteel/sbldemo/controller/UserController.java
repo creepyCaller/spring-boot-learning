@@ -14,6 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Api("访问用户的API")
 public class UserController {
 
+    /**
+     * 访问{ServerRoot}/user/{username}，
+     * 转发至用户详情页，
+     * 详情页用model传入的用户名在GET {ServerRoot}/users/{username}，
+     * 异步加载用户实体对应JSON对应对象，
+     * 再由Vue.js绘制至DOM组件
+     * @param username 地址传入的请求用户名
+     * @return 需要映射的页面地址到视图解析器
+     */
     @GetMapping(value = "/{username}")
     @ApiOperation(value = "获取用户名为{username}的详细信息")
     @ApiImplicitParam(name = "username", dataType = "String", paramType = "path")

@@ -1,27 +1,19 @@
 package com.liuzhousteel.sbldemo.controller;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
-import cn.hutool.core.bean.copier.ValueProvider;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.liuzhousteel.sbldemo.domain.User;
-import com.liuzhousteel.sbldemo.domain.Want;
-import com.liuzhousteel.sbldemo.model.ResultModel;
-import com.liuzhousteel.sbldemo.service.WantService;
-import com.liuzhousteel.sbldemo.util.TimeUtil;
-import com.liuzhousteel.sbldemo.util.WantValueProvider;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import java.io.IOException;
-import java.lang.reflect.Type;
+        import com.fasterxml.jackson.databind.ObjectMapper;
+        import com.liuzhousteel.sbldemo.domain.Want;
+        import com.liuzhousteel.sbldemo.model.ResultModel;
+        import com.liuzhousteel.sbldemo.service.WantService;
+        import io.swagger.annotations.Api;
+        import io.swagger.annotations.ApiImplicitParam;
+        import io.swagger.annotations.ApiImplicitParams;
+        import io.swagger.annotations.ApiOperation;
+        import org.springframework.data.domain.Page;
+        import org.springframework.http.HttpStatus;
+        import org.springframework.http.ResponseEntity;
+        import org.springframework.stereotype.Controller;
+        import org.springframework.web.bind.annotation.*;
+        import java.io.IOException;
 
 @Controller
 @RequestMapping("/wants")
@@ -70,13 +62,29 @@ public class WantsController {
         return new ResponseEntity<>(ResultModel.ok(1, wantService.findById(id)), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "更新id为{id}的订单", notes = "返回更新后的订单，标准的返回格式：{\"id\":1,\"name\":\"62LT\",\"amount\":0,\"price\":0.0,\"remark\":\"无\",\"date\":\"2019-10-09T10:23:56.000+0000\",\"status\":0}")
+    @ApiOperation(value = "完全更新id为{id}的订单", notes = "传入一个完整描述订单的POJO，返回更新后的订单，标准的返回格式：{\"id\":1,\"name\":\"62LT\",\"amount\":0,\"price\":0.0,\"remark\":\"无\",\"date\":\"2019-10-09T10:23:56.000+0000\",\"status\":0}")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", dataType = "Integer", paramType = "path"),
             @ApiImplicitParam(name = "param", dataType = "String", paramType = "query")
     })
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ResultModel> updateWant(@PathVariable(value = "id") Integer id, @RequestParam("param") String param) {
+    public ResponseEntity<ResultModel> updateWantComplete(@PathVariable(value = "id") Integer id, @RequestParam("param") String param) {
+        Want want = null;
+        try {
+            want = mapper.readValue(param, Want.class); // 传入的JSON字符串转为对象
+        } catch (IOException e) {
+            return new ResponseEntity<>(ResultModel.error(0), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(ResultModel.ok(1, wantService.update(id, want)), HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "部分更新id为{id}的订单", notes = "传入部分描述订单的POJO，返回更新后的订单，标准的返回格式：{\"id\":1,\"name\":\"62LT\",\"amount\":0,\"price\":0.0,\"remark\":\"无\",\"date\":\"2019-10-09T10:23:56.000+0000\",\"status\":0}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", dataType = "Integer", paramType = "path"),
+            @ApiImplicitParam(name = "param", dataType = "String", paramType = "query")
+    })
+    @PatchMapping(value = "/{id}")
+    public ResponseEntity<ResultModel> updateWantPart(@PathVariable(value = "id") Integer id, @RequestParam("param") String param) {
         Want want = null;
         try {
             want = mapper.readValue(param, Want.class); // 传入的JSON字符串转为对象

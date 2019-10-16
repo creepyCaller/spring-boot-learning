@@ -19,6 +19,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         InterceptorRegistration registration = registry.addInterceptor(new DashboardInterceptor());
         registration.addPathPatterns("/dashboard/**");
-        registration.excludePathPatterns("/dashboard/wants", "/dashboard/wants/", "/dashboard/wants/**");
+        registration.excludePathPatterns("/dashboard/want", "/dashboard/want/", "/dashboard/want/**");
     }
 }
